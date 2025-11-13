@@ -59,18 +59,25 @@ python src/kingdee_search_server.py
 
 ## MCP 服务配置（机器可读）
 
-以下 JSON 片段用于 MCP 广场/注册表自动解析：
+以下 JSON 片段用于 MCP 广场/注册表自动解析（包含标准 $schema）：
 
 ```json
 {
+  "$schema": "https://modelcontextprotocol.io/schemas/registry/manifest.schema.json",
   "name": "kingdee-search-server",
-  "type": "stdio",
   "description": "搜索金蝶开发者社区知识库的 MCP 服务器",
-  "command": "python",
-  "args": ["-m", "kingdee_search_server"],
-  "env": {},
-  "repository": "https://github.com/qiliang517/kingdee-search-mcp",
+  "version": "1.0.0",
   "license": "MIT",
+  "repository": "https://github.com/qiliang517/kingdee-search-mcp",
+  "servers": [
+    {
+      "type": "stdio",
+      "command": "python",
+      "args": ["-m", "kingdee_search_server"],
+      "env": {},
+      "runtime": "python"
+    }
+  ],
   "tools": [
     {
       "name": "search_kingdee_developer",
