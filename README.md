@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 金蝶开发者社区搜索 MCP Server
 
 这是一个 Model Context Protocol (MCP) 服务器，用于搜索金蝶开发者社区的知识库。
@@ -115,3 +116,6 @@ twine upload dist/*
 
 本项目为金蝶开发者工具的一部分。
 
+=======
+# kingdee-search-mcp
+>>>>>>> 94e8169de6f6980526d34c754b6641339434a4fd
