@@ -1,0 +1,41 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+*.pyc
+build/
+dist/
+wheels/
+*.egg-info
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Virtual environments
+.venv
+venv/
+env/
+
+# Log files
+*.log
+run.log
+
+# Temporary files
+Checking
+Downloading
+Installing
+Upgrading
+0.*
+*.zip
+
+# Package directories
+package/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
