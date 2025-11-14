@@ -17,7 +17,7 @@ if exist "%LOG_FILE%" del "%LOG_FILE%"
 
 rem parse arguments
 :parse_args
-if "%~1"=="" goto after_parse
+if "%~1"=="" goto :after_parse
 if /I "%~1"=="--python" (
     set "PYTHON_EXE=%~2"
     shift & shift
@@ -129,23 +129,49 @@ if "%OFFLINE_MODE%"=="1" (
     )
 ) else (
     rem Online mode: check if wheel file exists locally first
+    set "LOCAL_WHEEL_FOUND=0"
+    
+    rem Check current directory
     if exist "%WHEEL_PATH%" (
+        call :log "Found wheel in current directory: %WHEEL_PATH%"
         python -m pip install "%WHEEL_PATH%" --default-timeout=120 -i https://mirrors.aliyun.com/pypi/simple >> "%LOG_FILE%" 2>&1
-    ) else (
-        rem If wheel file not found, try installing by package name
+        set "LOCAL_WHEEL_FOUND=1"
+    )
+    
+    rem Check dist directory
+    if "!LOCAL_WHEEL_FOUND!"=="0" (
+        if exist "dist\%WHEEL_PATH%" (
+            call :log "Found wheel in dist directory: dist\%WHEEL_PATH%"
+            python -m pip install "dist\%WHEEL_PATH%" --default-timeout=120 -i https://mirrors.aliyun.com/pypi/simple >> "%LOG_FILE%" 2>&1
+            set "LOCAL_WHEEL_FOUND=1"
+        )
+    )
+    
+    rem If wheel file not found locally, try installing by package name
+    if "!LOCAL_WHEEL_FOUND!"=="0" (
+        call :log "Wheel file not found locally, installing from PyPI..."
         python -m pip install kd-search-mcp --default-timeout=120 -i https://mirrors.aliyun.com/pypi/simple >> "%LOG_FILE%" 2>&1
     )
+    
     if errorlevel 1 (
         call :log "ERROR: package installation failed. See %LOG_FILE% for details."
         exit /b 1
     )
 )
 
+rem Verify that the package is installed correctly
+call :log "=> verifying kd-search-mcp installation..."
+python -c "import kd_search_mcp.main" >> "%LOG_FILE%" 2>&1
+if errorlevel 1 (
+    call :log "ERROR: kd-search-mcp package not installed correctly. See %LOG_FILE% for details."
+    exit /b 1
+)
+
 call :log "=> starting MCP service..."
 if /I "%TRANSPORT%"=="sse" (
-    mcp run kd_search_mcp.main:main --transport sse >> "%LOG_FILE%" 2>&1
+    python -c "from kd_search_mcp.main import main; main()" >> "%LOG_FILE%" 2>&1
 ) else (
-    mcp run kd_search_mcp.main:main >> "%LOG_FILE%" 2>&1
+    python -c "from kd_search_mcp.main import main; main()" >> "%LOG_FILE%" 2>&1
 )
 
 endlocal
@@ -159,4 +185,3 @@ if defined msg (
     >> "%LOG_FILE%" echo.
 )
 exit /b 0
-
